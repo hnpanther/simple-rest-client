@@ -63,6 +63,8 @@ public class RestClientApplication {
                 .uri("/customers/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
+                .onStatus(status -> status.value() == 404, (request, response) ->
+                    logger.info("404 not found"))
                 .body(Customer.class);
         System.out.println(customer);
     }
@@ -86,7 +88,7 @@ public class RestClientApplication {
     public void updateCustomer() {
         logger.info("updateCustomer");
         Customer customer = new Customer();
-        customer.setId(1);
+        customer.setId(10);
         customer.setFirstName("update customer");
         customer.setLastName("update customer");
         ResponseEntity responseEntity = restClient.put()
@@ -94,6 +96,8 @@ public class RestClientApplication {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(customer)
                 .retrieve()
+                .onStatus(status -> status.value() == 404, (request, response) ->
+                        logger.info("404 not found"))
                 .toBodilessEntity();
         logger.info("response code=" + responseEntity.getStatusCode());
     }
